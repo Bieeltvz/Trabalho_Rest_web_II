@@ -29,11 +29,5 @@ Endpoints (exemplos):
 - POST /deliveries
 - GET /deliveries
 
-Todos retornam JSON com a chave "message" informando que o endpoint está funcional.
-
-Comentários:
-- O usuário solicitou que apenas os endpoints retornem confirmação de funcionamento
-  e que não seja implementada persistência ou autenticação real. O código está
-  totalmente comentado em português nos controllers.
 # Trabalho_Rest_web_II
 
