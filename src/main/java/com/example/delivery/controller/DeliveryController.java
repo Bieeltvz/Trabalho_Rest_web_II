@@ -3,6 +3,7 @@ package com.example.delivery.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,26 +16,39 @@ public class DeliveryController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> createDelivery() {
-        return ResponseEntity.ok(Map.of("message", "createDelivery endpoint funcional"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "createDelivery endpoint funcional");
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteDelivery(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "deleteDelivery endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "deleteDelivery endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, String>> updateDelivery(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "updateDelivery endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "updateDelivery endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, String>> getDeliveryById(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "getDeliveryById endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "getDeliveryById endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping
     public ResponseEntity<Map<String, String>> getAllDeliveries() {
-        return ResponseEntity.ok(Map.of("message", "getAllDeliveries endpoint funcional"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "getAllDeliveries endpoint funcional");
+        return ResponseEntity.ok(res);
     }
 }

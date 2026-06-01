@@ -3,6 +3,7 @@ package com.example.delivery.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,13 +20,18 @@ public class AuthController {
     // Registrar novo usuário (pode ser chamado sem autenticação)
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register() {
-        return ResponseEntity.ok(Map.of("message", "register endpoint funcional"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "register endpoint funcional");
+        return ResponseEntity.ok(res);
     }
 
     // Login (retorna mensagem informando que endpoint funciona)
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login() {
         // Aqui normalmente geraríamos um token JWT; por agora apenas confirmamos funcionalidade
-        return ResponseEntity.ok(Map.of("message", "login endpoint funcional", "token", "dummy-token"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "login endpoint funcional");
+        res.put("token", "dummy-token");
+        return ResponseEntity.ok(res);
     }
 }

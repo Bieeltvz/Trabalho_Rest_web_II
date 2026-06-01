@@ -3,6 +3,7 @@ package com.example.delivery.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,31 +19,43 @@ public class RestaurantController {
     // Insert - criar novo restaurante
     @PostMapping
     public ResponseEntity<Map<String, String>> createRestaurant() {
-        // Retorna JSON simples informando funcionalidade
-        return ResponseEntity.ok(Map.of("message", "createRestaurant endpoint funcional"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "createRestaurant endpoint funcional");
+        return ResponseEntity.ok(res);
     }
 
     // Delete - remover restaurante por id
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteRestaurant(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "deleteRestaurant endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "deleteRestaurant endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     // Update - atualizar restaurante por id
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, String>> updateRestaurant(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "updateRestaurant endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "updateRestaurant endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     // Select by id - buscar restaurante por id
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, String>> getRestaurantById(@PathVariable String id) {
-        return ResponseEntity.ok(Map.of("message", "getRestaurantById endpoint funcional", "id", id));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "getRestaurantById endpoint funcional");
+        res.put("id", id);
+        return ResponseEntity.ok(res);
     }
 
     // Select all - listar todos os restaurantes
     @GetMapping
     public ResponseEntity<Map<String, String>> getAllRestaurants() {
-        return ResponseEntity.ok(Map.of("message", "getAllRestaurants endpoint funcional"));
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "getAllRestaurants endpoint funcional");
+        return ResponseEntity.ok(res);
     }
 }
