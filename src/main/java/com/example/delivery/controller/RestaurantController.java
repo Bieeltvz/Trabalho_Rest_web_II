@@ -10,7 +10,11 @@ import java.util.Map;
  * Controller para recursos de Restaurante.
  * Implementa os endpoints REST solicitados no enunciado, porém
  * apenas retornam mensagens informando que o endpoint está funcional.
- * Todos os métodos comentados em português para facilitar avaliação.
+ *
+ * Observação: neste projeto não existe uma entidade `Restaurante`/`Restaurant`
+ * mapeada com JPA. Portanto não há repositório para vincular aqui —
+ * os endpoints atuam como stubs funcionais que demonstram o contrato HTTP.
+ * Comentários foram escritos no estilo de um desenvolvedor para facilitar leitura.
  */
 @RestController
 @RequestMapping("/restaurants")
