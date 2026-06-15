@@ -3,6 +3,7 @@ package com.example.delivery.controller;
 import com.example.delivery.model.Usuario;
 import com.example.delivery.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,15 @@ public class UserController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Create: salva um novo usuário recebido no corpo da requisição
     @PostMapping
     public ResponseEntity<Usuario> createUser(@RequestBody Usuario usuario) {
+        if (usuario.getSenha() != null) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        }
         Usuario saved = usuarioRepository.save(usuario);
         return ResponseEntity.ok(saved);
     }
@@ -45,6 +52,13 @@ public class UserController {
         Optional<Usuario> existing = usuarioRepository.findById(id);
         if (!existing.isPresent()) {
             return ResponseEntity.notFound().build();
+        }
+        // Preserve or re-hash password: if a new password is provided, encode it;
+        // otherwise keep existing hashed password.
+        if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        } else {
+            usuario.setSenha(existing.get().getSenha());
         }
         usuario.setId(id);
         Usuario saved = usuarioRepository.save(usuario);

@@ -4,6 +4,7 @@ import com.example.delivery.model.*;
 import com.example.delivery.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,22 +30,42 @@ public class DataInitializer implements CommandLineRunner {
     private final PedidoRepository pedidoRepository;
     private final PedidoProdutoRepository pedidoProdutoRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public DataInitializer(UsuarioRepository usuarioRepository,
                            ClienteRepository clienteRepository,
                            CategoriaRepository categoriaRepository,
                            ProdutoRepository produtoRepository,
                            PedidoRepository pedidoRepository,
-                           PedidoProdutoRepository pedidoProdutoRepository) {
+                           PedidoProdutoRepository pedidoProdutoRepository,
+                           PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.categoriaRepository = categoriaRepository;
         this.produtoRepository = produtoRepository;
         this.pedidoRepository = pedidoRepository;
         this.pedidoProdutoRepository = pedidoProdutoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        // Garantir que senhas existentes no banco estejam no formato BCrypt.
+        // Isso cuida de execuções anteriores onde senhas foram salvas em texto claro.
+        List<Usuario> allUsers = usuarioRepository.findAll();
+        boolean updated = false;
+        for (Usuario u : allUsers) {
+            String pwd = u.getSenha();
+            if (pwd != null && !pwd.startsWith("$2a$") && !pwd.startsWith("$2b$") && !pwd.startsWith("$2y$")) {
+                u.setSenha(passwordEncoder.encode(pwd));
+                updated = true;
+            }
+        }
+        if (updated) {
+            usuarioRepository.saveAll(allUsers);
+            System.out.println("[DataInitializer] Re-hashed existing user passwords to BCrypt");
+        }
+
         // Apenas popula se vazio: evita duplicar dados a cada inicialização
         if (usuarioRepository.count() == 0) {
             List<Usuario> usuarios = new ArrayList<>();
@@ -52,7 +73,8 @@ public class DataInitializer implements CommandLineRunner {
                 Usuario u = new Usuario();
                 u.setNome("Usuario " + i);
                 u.setLogin("user" + i);
-                u.setSenha("senha" + i);
+                // utilizar hash BCrypt para senhas de exemplo
+                u.setSenha(passwordEncoder.encode("senha" + i));
                 usuarios.add(u);
             }
             usuarioRepository.saveAll(usuarios);

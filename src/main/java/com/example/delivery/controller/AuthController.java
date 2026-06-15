@@ -2,6 +2,13 @@ package com.example.delivery.controller;
 
 import com.example.delivery.model.Usuario;
 import com.example.delivery.repository.UsuarioRepository;
+import com.example.delivery.security.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +38,23 @@ public class AuthController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     // Registrar novo usuário: salva a entidade `Usuario` no banco.
     @PostMapping("/register")
     public ResponseEntity<Usuario> register(@RequestBody Usuario usuario) {
-        // salva a entidade e retorna o objeto persistido (com id preenchido)
+        // Antes de salvar, codifica a senha com BCrypt para segurança
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         Usuario saved = usuarioRepository.save(usuario);
         return ResponseEntity.ok(saved);
     }
@@ -45,17 +65,18 @@ public class AuthController {
         String login = body.get("login");
         String senha = body.get("senha");
         if (login == null || senha == null) return ResponseEntity.badRequest().body("login e senha são obrigatórios");
-        // busca o usuário e compara a senha em texto (exemplo)
-        return usuarioRepository.findByLogin(login).map(u -> {
-            if (senha.equals(u.getSenha())) {
-                Map<String, String> res = new HashMap<>();
-                res.put("message", "autenticado");
-                // token fictício — substituir por geração real de token/JWT
-                res.put("token", "dummy-token");
-                return ResponseEntity.ok(res);
-            } else {
-                return ResponseEntity.status(401).body("credenciais inválidas");
-            }
-        }).orElseGet(() -> ResponseEntity.status(401).body("credenciais inválidas"));
+        // Autentica usando AuthenticationManager; em caso de sucesso gera JWT
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, senha));
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(401).body("credenciais inválidas");
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(login);
+        String token = jwtUtil.generateToken(userDetails);
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "autenticado");
+        res.put("token", token);
+        return ResponseEntity.ok(res);
     }
 }
